@@ -1,0 +1,51 @@
+
+4. Crie um bloco PL/SQL que leia a tabela EMP, selecione o código do funcionário (EMPNO), nome do funcionário (ENAME) e cargo do funcionário (JOB). Se o salário do funcionário for igual ou superior a 2750 insira os dados selecionados na tabela EMPMAIS, caso contrário, insira-os na tabela EMPMENOS. 
+
+SET SERVEROUTPUT ON
+
+BEGIN
+  FOR emp_cur IN (SELECT empno, ename, job, sal from emp) LOOP
+    IF emp_cur.sal >= 2750 THEN
+       INSERT INTO empmais VALUES (emp_cur.empno, emp_cur.ename, emp_cur.job);
+    ELSE
+       INSERT INTO empmenos VALUES (emp_cur.empno, emp_cur.ename, emp_cur.job);
+    END IF;
+   END LOOP;
+END;
+/
+
+5. Crie um bloco PL/SQL que gere um relatório com o nome (ENAME) de todos os funcionários listados de trás para frente. 
+
+SET SERVEROUTPUT ON
+
+DECLARE
+  nome varchar2(30);
+BEGIN
+  FOR rec_empregados IN (select * from scott.emp) LOOP
+    FOR i in REVERSE 1..length(rec_empregados.ENAME) LOOP
+        nome := nome || substr(rec_empregados.ENAME, i, 1);
+    END LOOP;
+    DBMS_OUTPUT.PUT_LINE(nome);
+    nome := '';
+  END LOOP;
+END;
+/
+
+SET SERVEROUTPUT ON
+DECLARE
+    CURSOR c1 IS
+    SELECT 
+        A.DNAME, 
+        (SELECT COUNT(*) FROM EMP WHERE A.DEPTNO = EMP.DEPTNO) "CONTAGEM"
+    FROM
+        DEPT A
+    ORDER BY CONTAGEM;
+BEGIN
+    FOR dp IN c1
+    LOOP
+        DBMS_OUTPUT.PUT_LINE('O DEPARTAMENTO ' || dp.dname || ' tem '|| dp.contagem || ' funcionarios');
+    END LOOP;
+END;
+/
+
+
